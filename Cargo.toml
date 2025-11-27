@@ -1,0 +1,13 @@
+[package]
+name = "incodoc-to-html-css"
+version = "0.1.0"
+edition = "2024"
+
+[[example]]
+name = "testbin"
+path = "src/bin.rs"
+
+[dependencies]
+
+[dev-dependencies]
+
