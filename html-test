@@ -1,0 +1,4 @@
+#!/bin/sh
+
+cargo run --example testbin > test.html
+firefox test.html &
