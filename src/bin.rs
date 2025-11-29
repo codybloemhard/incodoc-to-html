@@ -6,7 +6,7 @@ const INPUT: &str =
 "
 # H1
 
-test par with some ***emphasis***.
+test par with some ***emphasis*** yay.
 another line.
 
 nother paragraph.

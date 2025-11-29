@@ -29,13 +29,17 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
     for item in &par.items {
         match item {
             ParagraphItem::Text(text) => *output += text,
-            // ParagraphItem::MText(TextWithMeta { text, tags, .. }) => {
-            //     if tags.contains("code") {
-            //         inline_code_to_ansi(text, conf, c, output);
-            //     } else {
-            //         text_to_ansi(text, conf, c, output);
-            //     }
-            // },
+            ParagraphItem::MText(TextWithMeta { text, tags, .. }) => {
+                // inline code is not handled differently
+                // it will show up as a class
+                // and the css can handle it
+                *output += "<span class=\"";
+                for tag in tags {
+                    *output += tag;
+                    *output += " ";
+                }
+                *output += "\">";
+            },
             ParagraphItem::Em(emphasis) => emphasis_to_html_css(emphasis, output),
             // ParagraphItem::Link(link) => {
             //     link_to_ansi(link, &conf.link, conf, c, output);
