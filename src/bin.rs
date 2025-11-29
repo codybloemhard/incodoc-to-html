@@ -15,6 +15,7 @@ with another line.
 ## H2
 
 par par
+[link *text*](url)
 ";
 
 fn main() {

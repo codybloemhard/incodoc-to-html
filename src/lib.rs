@@ -39,11 +39,32 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
                     *output += " ";
                 }
                 *output += "\">";
+                *output += text;
+                *output += "</span>";
             },
             ParagraphItem::Em(emphasis) => emphasis_to_html_css(emphasis, output),
-            // ParagraphItem::Link(link) => {
-            //     link_to_ansi(link, &conf.link, conf, c, output);
-            // },
+            ParagraphItem::Link(link) => {
+                *output += "<a ";
+                *output += "href=\"";
+                *output += &link.url;
+                *output += "\" target=\"";
+                *output += "_blank";
+                if !link.tags.is_empty() {
+                    *output += "\" class=\"";
+                    for tag in &link.tags {
+                        *output += &tag;
+                        *output += " ";
+                    }
+                }
+                *output += "\">";
+                for item in &link.items {
+                    match item {
+                        LinkItem::String(text) => *output += text,
+                        LinkItem::Em(em) => emphasis_to_html_css(em, output),
+                    }
+                }
+                *output += "</a>";
+            },
             // ParagraphItem::Code(code) => {
             //     code_to_ansi(code, conf, c, output);
             // },
