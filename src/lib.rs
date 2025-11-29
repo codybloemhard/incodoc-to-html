@@ -57,14 +57,26 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
 
 pub fn section_to_html_css(section: &Section, output: &mut String) {
     *output += "<section>\n";
-    *output += "<h1>\n";
+    let level = match section.heading.level {
+        0 => "1",
+        1 => "2",
+        2 => "3",
+        3 => "4",
+        4 => "5",
+        _ => "6",
+    };
+    *output += "<h";
+    *output += level;
+    *output += ">\n";
     for item in &section.heading.items {
         match item {
             HeadingItem::String(string) => *output += string,
             HeadingItem::Em(emphasis) => emphasis_to_html_css(emphasis, output),
         }
     }
-    *output += "\n</h1>\n";
+    *output += "\n</h";
+    *output += level;
+    *output += ">\n";
     for item in &section.items {
         match item {
             SectionItem::Paragraph(par) => paragraph_to_html_css(par, output),

@@ -11,6 +11,10 @@ another line.
 
 nother paragraph.
 with another line.
+
+## H2
+
+par par
 ";
 
 fn main() {
