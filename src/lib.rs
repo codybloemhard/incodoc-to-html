@@ -24,61 +24,6 @@ pub fn nav_to_html(nav: &Nav, output: &mut String) {
 
 }
 
-pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
-    *output += "<p>\n";
-    for item in &par.items {
-        match item {
-            ParagraphItem::Text(text) => *output += text,
-            ParagraphItem::MText(TextWithMeta { text, tags, .. }) => {
-                // inline code is not handled differently
-                // it will show up as a class
-                // and the css can handle it
-                *output += "<span class=\"";
-                for tag in tags {
-                    *output += tag;
-                    *output += " ";
-                }
-                *output += "\">";
-                *output += text;
-                *output += "</span>";
-            },
-            ParagraphItem::Em(emphasis) => emphasis_to_html(emphasis, output),
-            ParagraphItem::Link(link) => {
-                *output += "<a ";
-                *output += "href=\"";
-                *output += &link.url;
-                *output += "\" target=\"";
-                *output += "_blank";
-                if !link.tags.is_empty() {
-                    *output += "\" class=\"";
-                    for tag in &link.tags {
-                        *output += tag;
-                        *output += " ";
-                    }
-                }
-                *output += "\">";
-                for item in &link.items {
-                    match item {
-                        LinkItem::String(text) => *output += text,
-                        LinkItem::Em(em) => emphasis_to_html(em, output),
-                    }
-                }
-                *output += "</a>";
-            },
-            ParagraphItem::Code(code) => {
-                code_to_html(code, output);
-            },
-            ParagraphItem::List(list) => {
-                list_to_html(list, output);
-            },
-            ParagraphItem::Table(table) => {
-                table_to_html(table, output);
-            },
-        }
-    }
-    *output += "\n</p>\n";
-}
-
 pub fn section_to_html(section: &Section, output: &mut String) {
     *output += "<section>\n";
     let level = match section.heading.level {
@@ -108,6 +53,59 @@ pub fn section_to_html(section: &Section, output: &mut String) {
         }
     }
     *output += "</section>\n";
+}
+
+pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
+    *output += "<p>\n";
+    for item in &par.items {
+        match item {
+            ParagraphItem::Text(text) => *output += text,
+            ParagraphItem::MText(mtext) => mtext_to_html(mtext, output),
+            ParagraphItem::Em(emphasis) => emphasis_to_html(emphasis, output),
+            ParagraphItem::Link(link) => link_to_html(link, output),
+            ParagraphItem::Code(code) => code_to_html(code, output),
+            ParagraphItem::List(list) => list_to_html(list, output),
+            ParagraphItem::Table(table) => table_to_html(table, output),
+        }
+    }
+    *output += "\n</p>\n";
+}
+
+pub fn mtext_to_html(TextWithMeta { text, tags, .. }: &TextWithMeta, output: &mut String) {
+    // inline code is not handled differently
+    // it will show up as a class
+    // and the css can handle it
+    *output += "<span class=\"";
+    for tag in tags {
+        *output += tag;
+        *output += " ";
+    }
+    *output += "\">";
+    *output += text;
+    *output += "</span>";
+}
+
+pub fn link_to_html(link: & Link, output: &mut String)  {
+    *output += "<a ";
+    *output += "href=\"";
+    *output += &link.url;
+    *output += "\" target=\"";
+    *output += "_blank";
+    if !link.tags.is_empty() {
+        *output += "\" class=\"";
+        for tag in &link.tags {
+            *output += tag;
+            *output += " ";
+        }
+    }
+    *output += "\">";
+    for item in &link.items {
+        match item {
+            LinkItem::String(text) => *output += text,
+            LinkItem::Em(em) => emphasis_to_html(em, output),
+        }
+    }
+    *output += "</a>";
 }
 
 pub fn list_to_html(list: &List, output: &mut String) {
