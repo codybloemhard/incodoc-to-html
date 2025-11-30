@@ -1,30 +1,30 @@
 use incodoc::*;
 
-pub fn doc_to_html_css_string(doc: &Doc) -> String {
+pub fn doc_to_html_string(doc: &Doc) -> String {
     let mut res = String::new();
-    doc_to_html_css(doc, &mut res);
+    doc_to_html(doc, &mut res);
     res
 }
 
-pub fn doc_to_html_css(doc: &Doc, output: &mut String) {
+pub fn doc_to_html(doc: &Doc, output: &mut String) {
     *output += "<html>\n";
     *output += "<body>\n";
     for item in &doc.items {
         match item {
-            DocItem::Nav(nav) => nav_to_html_css(nav, output),
-            DocItem::Paragraph(par) => paragraph_to_html_css(par, output),
-            DocItem::Section(section) => section_to_html_css(section, output),
+            DocItem::Nav(nav) => nav_to_html(nav, output),
+            DocItem::Paragraph(par) => paragraph_to_html(par, output),
+            DocItem::Section(section) => section_to_html(section, output),
         }
     }
     *output += "</body>\n";
     *output += "</html>\n";
 }
 
-pub fn nav_to_html_css(nav: &Nav, output: &mut String) {
+pub fn nav_to_html(nav: &Nav, output: &mut String) {
 
 }
 
-pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
+pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
     *output += "<p>\n";
     for item in &par.items {
         match item {
@@ -42,7 +42,7 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
                 *output += text;
                 *output += "</span>";
             },
-            ParagraphItem::Em(emphasis) => emphasis_to_html_css(emphasis, output),
+            ParagraphItem::Em(emphasis) => emphasis_to_html(emphasis, output),
             ParagraphItem::Link(link) => {
                 *output += "<a ";
                 *output += "href=\"";
@@ -60,26 +60,26 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
                 for item in &link.items {
                     match item {
                         LinkItem::String(text) => *output += text,
-                        LinkItem::Em(em) => emphasis_to_html_css(em, output),
+                        LinkItem::Em(em) => emphasis_to_html(em, output),
                     }
                 }
                 *output += "</a>";
             },
             ParagraphItem::Code(code) => {
-                code_to_html_css(code, output);
+                code_to_html(code, output);
             },
             ParagraphItem::List(list) => {
-                list_to_html_css(list, output);
+                list_to_html(list, output);
             },
             ParagraphItem::Table(table) => {
-                table_to_html_css(table, output);
+                table_to_html(table, output);
             },
         }
     }
     *output += "\n</p>\n";
 }
 
-pub fn section_to_html_css(section: &Section, output: &mut String) {
+pub fn section_to_html(section: &Section, output: &mut String) {
     *output += "<section>\n";
     let level = match section.heading.level {
         0 => "1",
@@ -95,7 +95,7 @@ pub fn section_to_html_css(section: &Section, output: &mut String) {
     for item in &section.heading.items {
         match item {
             HeadingItem::String(string) => *output += string,
-            HeadingItem::Em(emphasis) => emphasis_to_html_css(emphasis, output),
+            HeadingItem::Em(emphasis) => emphasis_to_html(emphasis, output),
         }
     }
     *output += "\n</h";
@@ -103,14 +103,14 @@ pub fn section_to_html_css(section: &Section, output: &mut String) {
     *output += ">\n";
     for item in &section.items {
         match item {
-            SectionItem::Paragraph(par) => paragraph_to_html_css(par, output),
-            SectionItem::Section(section) => section_to_html_css(section, output),
+            SectionItem::Paragraph(par) => paragraph_to_html(par, output),
+            SectionItem::Section(section) => section_to_html(section, output),
         }
     }
     *output += "</section>\n";
 }
 
-pub fn list_to_html_css(list: &List, output: &mut String) {
+pub fn list_to_html(list: &List, output: &mut String) {
     let list_tag = match list.ltype {
         ListType::Distinct => "ol",
         ListType::Identical => "ul",
@@ -128,7 +128,7 @@ pub fn list_to_html_css(list: &List, output: &mut String) {
             *output += " class=\"checked-list-item\"";
         }
         *output += ">\n";
-        paragraph_to_html_css(par, output);
+        paragraph_to_html(par, output);
         *output += "</li>\n";
     }
     *output += "</";
@@ -136,7 +136,7 @@ pub fn list_to_html_css(list: &List, output: &mut String) {
     *output += ">\n";
 }
 
-pub fn table_to_html_css(table: &Table, output: &mut String) {
+pub fn table_to_html(table: &Table, output: &mut String) {
     *output += "<table>\n";
     for row in &table.rows {
         *output += "<tr>\n";
@@ -149,7 +149,7 @@ pub fn table_to_html_css(table: &Table, output: &mut String) {
             *output += "<";
             *output += item_tag;
             *output += ">\n";
-            paragraph_to_html_css(par, output);
+            paragraph_to_html(par, output);
             *output += "</";
             *output += item_tag;
             *output += ">\n";
@@ -159,7 +159,7 @@ pub fn table_to_html_css(table: &Table, output: &mut String) {
     *output += "</table>\n";
 }
 
-pub fn code_to_html_css(code: &Result<CodeBlock, CodeIdentError>, output: &mut String) {
+pub fn code_to_html(code: &Result<CodeBlock, CodeIdentError>, output: &mut String) {
     match code {
         Ok(code) => {
             *output += "<pre><code lang=\"";
@@ -175,7 +175,7 @@ pub fn code_to_html_css(code: &Result<CodeBlock, CodeIdentError>, output: &mut S
     }
 }
 
-pub fn emphasis_to_html_css(em: &Emphasis, output: &mut String) {
+pub fn emphasis_to_html(em: &Emphasis, output: &mut String) {
     let (start, end) = match (em.etype, em.strength) {
         (EmType::Emphasis, EmStrength::Light) => ("<em>", "</em>"),
         (EmType::Emphasis, EmStrength::Medium) => ("<strong>", "</strong>"),

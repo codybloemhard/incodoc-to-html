@@ -82,7 +82,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "incodoc-to-html-css"
+name = "incodoc-to-html"
 version = "0.1.0"
 dependencies = [
  "incodoc",

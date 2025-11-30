@@ -1,4 +1,4 @@
-use incodoc_to_html_css::doc_to_html_css_string;
+use incodoc_to_html::doc_to_html_string;
 
 use md_to_incodoc::parse_md_to_incodoc;
 
@@ -41,5 +41,5 @@ for i in 0..10 {
 
 fn main() {
     let doc = parse_md_to_incodoc(INPUT);
-    println!("{}", doc_to_html_css_string(&doc));
+    println!("{}", doc_to_html_string(&doc));
 }
