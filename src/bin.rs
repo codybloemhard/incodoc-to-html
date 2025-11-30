@@ -16,6 +16,15 @@ with another line.
 
 par par
 [link *text*](url)
+
+- yay
+- this
+- is
+- a
+  - [ ] list
+  - [x] in
+  - [x] a
+- list
 ";
 
 fn main() {

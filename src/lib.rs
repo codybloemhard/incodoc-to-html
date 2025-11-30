@@ -52,7 +52,7 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
                 if !link.tags.is_empty() {
                     *output += "\" class=\"";
                     for tag in &link.tags {
-                        *output += &tag;
+                        *output += tag;
                         *output += " ";
                     }
                 }
@@ -68,9 +68,9 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
             // ParagraphItem::Code(code) => {
             //     code_to_ansi(code, conf, c, output);
             // },
-            // ParagraphItem::List(list) => {
-            //     list_to_ansi(list, conf, c, output);
-            // },
+            ParagraphItem::List(list) => {
+                list_to_html_css(list, output);
+            },
             // ParagraphItem::Table(table) => {
             //     table_to_ansi(table, conf, c, output);
             // },
@@ -109,6 +109,32 @@ pub fn section_to_html_css(section: &Section, output: &mut String) {
         }
     }
     *output += "</section>\n";
+}
+
+pub fn list_to_html_css(list: &List, output: &mut String) {
+    let list_tag = match list.ltype {
+        ListType::Distinct => "ol",
+        ListType::Identical => "ul",
+        ListType::Checked => "ul",
+    };
+    *output += "<";
+    *output += list_tag;
+    if list.ltype == ListType::Checked {
+        *output += " class=\"checked-list\"";
+    }
+    *output += ">\n";
+    for par in &list.items {
+        *output += "<li";
+        if par.tags.contains("checked") {
+            *output += " class=\"checked-list-item\"";
+        }
+        *output += ">\n";
+        paragraph_to_html_css(par, output);
+        *output += "</li>\n";
+    }
+    *output += "</";
+    *output += list_tag;
+    *output += ">\n";
 }
 
 pub fn emphasis_to_html_css(em: &Emphasis, output: &mut String) {
