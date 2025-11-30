@@ -71,9 +71,9 @@ pub fn paragraph_to_html_css(par: &Paragraph, output: &mut String) {
             ParagraphItem::List(list) => {
                 list_to_html_css(list, output);
             },
-            // ParagraphItem::Table(table) => {
-            //     table_to_ansi(table, conf, c, output);
-            // },
+            ParagraphItem::Table(table) => {
+                table_to_html_css(table, output);
+            },
             _ => {},
         }
     }
@@ -135,6 +135,29 @@ pub fn list_to_html_css(list: &List, output: &mut String) {
     *output += "</";
     *output += list_tag;
     *output += ">\n";
+}
+
+pub fn table_to_html_css(table: &Table, output: &mut String) {
+    *output += "<table>\n";
+    for row in &table.rows {
+        *output += "<tr>\n";
+        let item_tag = if row.is_header {
+            "th"
+        } else {
+            "td"
+        };
+        for par in &row.items {
+            *output += "<";
+            *output += item_tag;
+            *output += ">\n";
+            paragraph_to_html_css(&par, output);
+            *output += "</";
+            *output += item_tag;
+            *output += ">\n";
+        }
+        *output += "</tr>\n";
+    }
+    *output += "</table>\n";
 }
 
 pub fn emphasis_to_html_css(em: &Emphasis, output: &mut String) {
