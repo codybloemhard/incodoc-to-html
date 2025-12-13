@@ -25,24 +25,28 @@ pub fn doc_to_html(doc: &Doc, output: &mut String) {
 }
 
 pub fn nav_to_html(nav: &Nav, output: &mut String) {
+    ensure_newline(output);
     *output += "<nav";
     tags_to_html(&nav.tags, true, false, output);
     *output += "\n";
     if !nav.description.is_empty() {
         *output += "<h1>\n";
         *output += &nav.description;
-        *output += "</h1>\n";
+        *output += "\n</h1>\n";
     }
     for link in &nav.links {
+        ensure_newline(output);
         link_to_html(link, output);
     }
     for sub in &nav.subs {
         nav_to_html(sub, output);
     }
+    ensure_newline(output);
     *output += "</nav>\n";
 }
 
 pub fn section_to_html(section: &Section, output: &mut String) {
+    ensure_newline(output);
     *output += "<section";
     tags_to_html(&section.tags, true, false, output);
     *output += "\n";
@@ -73,10 +77,12 @@ pub fn section_to_html(section: &Section, output: &mut String) {
             SectionItem::Section(section) => section_to_html(section, output),
         }
     }
+    ensure_newline(output);
     *output += "</section>\n";
 }
 
 pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
+    ensure_newline(output);
     *output += "<p";
     tags_to_html(&par.tags, true, false, output);
     *output += "\n";
@@ -91,7 +97,8 @@ pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
             ParagraphItem::Table(table) => table_to_html(table, output),
         }
     }
-    *output += "\n</p>\n";
+    ensure_newline(output);
+    *output += "</p>\n";
 }
 
 pub fn mtext_to_html(TextWithMeta { text, tags, .. }: &TextWithMeta, output: &mut String) {
@@ -121,6 +128,7 @@ pub fn link_to_html(link: & Link, output: &mut String)  {
 }
 
 pub fn list_to_html(list: &List, output: &mut String) {
+    ensure_newline(output);
     let list_tag = match list.ltype {
         ListType::Distinct => "ol",
         ListType::Identical => "ul",
@@ -147,6 +155,7 @@ pub fn list_to_html(list: &List, output: &mut String) {
 }
 
 pub fn table_to_html(table: &Table, output: &mut String) {
+    ensure_newline(output);
     *output += "<table";
     tags_to_html(&table.tags, true, false, output);
     *output += "\n";
@@ -172,6 +181,7 @@ pub fn table_to_html(table: &Table, output: &mut String) {
 }
 
 pub fn code_to_html(code: &Result<CodeBlock, CodeIdentError>, output: &mut String) {
+    ensure_newline(output);
     match code {
         Ok(code) => {
             *output += "<pre><code lang=\"";
@@ -214,6 +224,12 @@ pub fn tags_to_html(tags: &HashSet<String>, end_tag: bool, backslash: bool, outp
             *output += "\"";
         }
         *output += ">";
+    }
+}
+
+pub fn ensure_newline(output: &mut String) {
+    if !output.ends_with('\n') {
+        *output += "\n";
     }
 }
 
