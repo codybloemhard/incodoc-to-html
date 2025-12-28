@@ -131,7 +131,8 @@ pub fn link_to_html(link: & Link, output: &mut String)  {
     *output += &link.url;
     *output += "\" target=\"";
     *output += "_blank";
-    tags_to_html(&link.tags, true, true, output);
+    *output += "\"";
+    tags_to_html(&link.tags, true, false, output);
     for item in &link.items {
         match item {
             LinkItem::String(text) => *output += text,
@@ -232,10 +233,11 @@ pub fn tags_to_html(tags: &HashSet<String>, end_tag: bool, backslash: bool, outp
             *output += tag;
             *output += " ";
         }
+        *output += "\"";
     }
     if end_tag {
         if backslash {
-            *output += "\"";
+            *output += "\\";
         }
         *output += ">";
     }
@@ -266,3 +268,4 @@ mod tests {
         assert_eq!(2 + 2, 4);
     }
 }
+
