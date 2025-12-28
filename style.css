@@ -1,0 +1,190 @@
+/* GENERAL */
+
+* {
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    color: #a9b1d6;
+    background: #1a1b26;
+    font-size: 24px;
+    font-family: "Monospace";
+    font-weight: 400;
+    line-height: 1.8em;
+    text-align: left;
+    margin: 0px;
+    padding: 32px;
+}
+
+/* NAVIGATION */
+
+nav {
+    border: 1px solid #a9b1d6;
+    background: #151620;
+    margin: 8px;
+    padding: 8px;
+}
+
+nav nav {
+    border: none;
+    margin: 0px;
+    padding-left: 8px;
+}
+
+nav h1 {
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 2.0em;
+    text-align: left;
+    margin: 0px;
+    padding: 0px;
+}
+
+nav a {
+    font-size: 24px;
+    font-weight: 200;
+    line-height: 1.8em;
+}
+
+/* STRUCTURE */
+
+section {
+    margin: 0px;
+    padding: 8px;
+}
+
+p {
+    margin: 0px;
+    padding: 0px;
+}
+
+/* HEADERS */
+
+h1 {
+    font-size: 32px;
+    padding-left: 16px;
+}
+
+h2 {
+    font-size: 28px;
+    padding: 6px;
+    padding-left: 16px;
+}
+
+h3 {
+    font-size: 26px;
+    padding: 4px;
+    padding-left: 12px;
+}
+
+/* LINKS */
+
+a {
+    color: #bb9af7;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* EMPHASIS */
+
+em {
+    font-style: italic;
+}
+
+strong {
+    font-style: normal;
+    font-weight: 600;
+}
+
+mark {
+    font-style: oblique;
+    font-weight: 800;
+    background: #151620;
+    color: #a9b1d6;
+    border: 1px dashed #a9b1d6;
+}
+
+span.light-de {
+    font-weight: 300;
+}
+
+span.medium-de {
+    font-weight: 100;
+}
+
+span.strong-de {
+    font-weight: 100;
+    colour: 151620;
+}
+
+/* LISTS */
+
+ol, ul {
+    list-style-position: outside;
+    padding-left: 1.2em;
+    margin: 0px;
+}
+
+li::marker {
+    content: "- ";
+}
+
+ul.checked-list > li::marker {
+    color: #f7768e;
+    content: "_ ";
+}
+
+ul.checked-list > li.checked-list-item::marker {
+    color: #9ece6a;
+    content: "✔ ";
+}
+
+/* TABLES */
+
+table {
+    background: #151620;
+    border: 1px solid #a9b1d6;
+    border-collapse: collapse;
+}
+
+tr:nth-child(even) {
+    background: #1a1b26;
+}
+
+/* tr:hover {
+    background: #1a1b26;
+} */
+
+th {
+    border: 1px solid #a9b1d6;
+    font-size: 26px;
+    font-weight: 600;
+    line-height: 2em;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+td {
+    border: 1px solid #a9b1d6;
+    padding-top: 2px;
+    padding-bottom: 2px;
+    padding-left: 16px;
+    padding-right: 16px;
+}
+
+/* CODE */
+
+code {
+    background: #151620;
+}
+
+span.code {
+    background: #151620;
+}
