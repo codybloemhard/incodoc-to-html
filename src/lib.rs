@@ -217,9 +217,9 @@ pub fn emphasis_to_html(em: &Emphasis, output: &mut String) {
         (EmType::Emphasis, EmStrength::Light) => ("<em>", "</em>"),
         (EmType::Emphasis, EmStrength::Medium) => ("<strong>", "</strong>"),
         (EmType::Emphasis, EmStrength::Strong) => ("<mark>", "</mark>"),
-        (EmType::Deemphasis, EmStrength::Light) => ("<span class=\"light-em\">", "</span>"),
-        (EmType::Deemphasis, EmStrength::Medium) => ("<span class=\"medium-em\">", "</span>"),
-        (EmType::Deemphasis, EmStrength::Strong) => ("<span class=\"strong-em\">", "</span>"),
+        (EmType::Deemphasis, EmStrength::Light) => ("<span class=\"light-de\">", "</span>"),
+        (EmType::Deemphasis, EmStrength::Medium) => ("<span class=\"medium-de\">", "</span>"),
+        (EmType::Deemphasis, EmStrength::Strong) => ("<span class=\"strong-de\">", "</span>"),
     };
     *output += start;
     *output += &em.text;
