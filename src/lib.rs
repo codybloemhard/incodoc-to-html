@@ -135,7 +135,11 @@ pub fn mtext_to_html(TextWithMeta { text, tags, .. }: &TextWithMeta, output: &mu
     *output += ">";
 }
 
-pub fn link_to_html(link: & Link, output: &mut String)  {
+pub fn link_to_html(link: &Link, output: &mut String) {
+    if link.tags.contains("image") {
+        image_to_html(link, output);
+        return;
+    }
     *output += "<a ";
     *output += "href=\"";
     *output += &link.url;
@@ -150,6 +154,19 @@ pub fn link_to_html(link: & Link, output: &mut String)  {
         }
     }
     *output += "</a>";
+}
+
+pub fn image_to_html(link: &Link, output: &mut String) {
+    *output += "<img src=\"";
+    *output += &link.url;
+    *output += "\" alt=\"";
+    for item in &link.items {
+        match item {
+            LinkItem::String(text) => *output += text,
+            LinkItem::Em(em) => *output += &em.text,
+        }
+    }
+    *output += "\">";
 }
 
 pub fn list_to_html(list: &List, output: &mut String) {

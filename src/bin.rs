@@ -46,6 +46,8 @@ par par
 - sup ^script^
 - sub ~script~
 
+![picture of hatsune miku](/home/cody/img/anime/miku-1.jpg)
+
 C | D | E
 --|--|--
 2 | *3* | ~4~
