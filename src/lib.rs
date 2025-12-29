@@ -119,10 +119,20 @@ pub fn mtext_to_html(TextWithMeta { text, tags, .. }: &TextWithMeta, output: &mu
     // inline code is not handled differently
     // it will show up as a class
     // and the css can handle it
-    *output += "<span";
-    tags_to_html(tags, true, true, output);
+    let tag = if tags.contains("super") {
+        "sup"
+    } else if tags.contains("sub") {
+        "sub"
+    } else {
+        "span"
+    };
+    *output += "<";
+    *output += tag;
+    tags_to_html(tags, true, false, output);
     *output += text;
-    *output += "</span>";
+    *output += "</";
+    *output += tag;
+    *output += ">";
 }
 
 pub fn link_to_html(link: & Link, output: &mut String)  {

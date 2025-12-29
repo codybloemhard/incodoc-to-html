@@ -35,7 +35,7 @@ with another line.
 par par
 [link *text*](url)
 
-- yay yay yay ~yay~ yay *yay* **yay** ***yay*** yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay
+- yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay yay
 - this
 - is
 - a
@@ -43,6 +43,8 @@ par par
   - [x] in
   - [x] a
 - list
+- sup ^script^
+- sub ~script~
 
 C | D | E
 --|--|--
