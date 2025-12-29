@@ -41,6 +41,10 @@ nav h1 {
     padding: 0px;
 }
 
+nav h1, nav h2, nav h3 {
+    display: block;
+}
+
 nav a {
     font-size: 24px;
     font-weight: 200;
@@ -61,6 +65,17 @@ p {
 
 /* HEADERS */
 
+h1, h2, h3 {
+    display: list-item;
+    list-style-position: inside;
+}
+
+h1::marker, h2::marker, h3::marker {
+    display: list-item;
+    content: "λ";
+    color: #9ece6a;
+}
+
 h1 {
     font-size: 32px;
     padding-left: 16px;
@@ -76,6 +91,12 @@ h3 {
     font-size: 26px;
     padding: 4px;
     padding-left: 12px;
+}
+
+h4, h5, h6 {
+    font-size: 24px;
+    padding: 2px;
+    padding-left: 4px;
 }
 
 /* LINKS */
@@ -132,6 +153,7 @@ ol, ul {
 
 li::marker {
     content: "- ";
+    color: #bb9af7;
 }
 
 ul.checked-list > li::marker {
