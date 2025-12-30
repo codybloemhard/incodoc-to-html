@@ -10,10 +10,9 @@ Corporeal elements to be configurable.
 
 todo:
 
-- nav links list
-- nav position
 - unconverted html
 - static highlighted code
+- nav position
 - nav collapse
 - image collapse
 - heading collapse

@@ -48,10 +48,14 @@ pub fn nav_to_html(nav: &Nav, output: &mut String) {
         *output += &nav.description;
         *output += "\n</h1>\n";
     }
+    *output += "<ol>\n";
     for link in &nav.links {
         ensure_newline(output);
+        *output += "<li>\n";
         link_to_html(link, output);
+        *output += "\n</li>\n";
     }
+    *output += "</ol>\n";
     for sub in &nav.subs {
         nav_to_html(sub, output);
     }
