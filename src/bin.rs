@@ -28,6 +28,9 @@ test par with some ***emphasis*** yay.
 another line.
 
 nother paragraph.
+
+> quote
+
 with another line.
 
 ## H2
@@ -53,15 +56,27 @@ C | D | E
 2 | *3* | ~4~
 **5** | ***6*** | `let x = 0;`
 
+> yay yay
+> > [!NOTE]
+> > extra quote [^longernoteid]
+
 ```rust
 let x = 0;
 for i in 0..10 {
     println!(\"{}\", yay);
 }
 ```
+
+[^longernoteid]:
+  line 0.
+  line 1.
+  `{ code }`
+  line 2.
+  line 3.
 ";
 
 fn main() {
     let doc = parse_md_to_incodoc(INPUT);
     println!("{}", doc_to_html_string(&doc));
 }
+

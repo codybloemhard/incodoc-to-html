@@ -33,6 +33,7 @@ nav nav {
 }
 
 nav h1 {
+    color: #a9b1d6;
     font-size: 26px;
     font-weight: 600;
     line-height: 2.0em;
@@ -109,12 +110,20 @@ h4, h5, h6 {
     padding-left: 4px;
 }
 
+h1, h2, h3, h4, h5, h6 {
+    color: #7aa2f7;
+}
+
 /* LINKS */
 
 a {
     color: #bb9af7;
     font-weight: 600;
     text-decoration: none;
+}
+
+a.footnote-ref {
+    color: #7aa2f7;
 }
 
 a:hover {
@@ -182,6 +191,8 @@ table {
     background: #151620;
     border: 1px solid #a9b1d6;
     border-collapse: collapse;
+    margin-top: 8px;
+    margin-bottom: 8px;
 }
 
 tr:nth-child(even) {
@@ -225,4 +236,26 @@ span.code {
 
 img {
     border: 1px solid #151620;
+}
+
+/* QUOTES */
+
+.blockquote, .blockquote-typed {
+    border-left: 2px solid #a9b1d6;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+}
+
+/* FOOTNOTES */
+
+.footnote-def {
+    background: #151620;
+    margin-top: 8px;
+    margin-bottom: 8px;
+    padding: 8px;
+}
+
+.footnote-def h6 {
+    color: #7aa2f7;
 }

@@ -97,9 +97,9 @@ checksum = "2874a2af47a2325c2001a6e6fad9b16a53b802102b528163885171cf92b15976"
 
 [[package]]
 name = "md-to-incodoc"
-version = "0.2.4"
+version = "0.2.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f9185712ee85cfc688618eb5e19379077c788c3d83ea6e281b110e6d4bbdeb97"
+checksum = "15f2fe9efb6c780da4486a5566e23f170ff5299424b8c98efb607723bfb067cb"
 dependencies = [
  "incodoc",
  "pulldown-cmark",

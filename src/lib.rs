@@ -66,8 +66,17 @@ pub fn nav_to_html(nav: &Nav, output: &mut String) {
 pub fn section_to_html(section: &Section, output: &mut String) {
     ensure_newline(output);
     *output += "<section";
-    tags_to_html(&section.tags, true, false, output);
-    *output += "\n";
+    tags_to_html(&section.tags, false, false, output);
+    if let Some(PropVal::String(id)) = section.props.get("id") {
+        *output += " id=\"";
+        if section.tags.contains("footnote-def") && !id.is_empty() {
+            *output += &id[1..]; // remove starting '#' so that a link '#link' points to this id
+        } else {
+            *output += id;
+        }
+        *output += "\"";
+    }
+    *output += ">\n";
     let level = match section.heading.level {
         0 => "1",
         1 => "2",
@@ -148,7 +157,11 @@ pub fn link_to_html(link: &Link, output: &mut String) {
     *output += "href=\"";
     *output += &link.url;
     *output += "\" target=\"";
-    *output += "_blank";
+    if link.tags.contains("footnote-ref") {
+        *output += "_self";
+    } else {
+        *output += "_blank";
+    }
     *output += "\"";
     tags_to_html(&link.tags, true, false, output);
     for item in &link.items {

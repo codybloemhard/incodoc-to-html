@@ -17,7 +17,5 @@ todo:
 - image collapse
 - heading collapse
 - wrap html in bigger html
-- block quote
 - block quote use html blockquote tag?
-- footnotes
 - test deemphasis
