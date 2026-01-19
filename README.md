@@ -12,10 +12,9 @@ todo:
 
 - unconverted html
 - static highlighted code
-- nav position
-- nav collapse
 - image collapse
 - heading collapse
 - wrap html in bigger html
 - block quote use html blockquote tag?
 - test deemphasis
+- table of contents

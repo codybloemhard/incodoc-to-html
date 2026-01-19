@@ -32,7 +32,7 @@ nav nav {
     padding-left: 8px;
 }
 
-nav h1 {
+nav summary h1, summary h1 {
     color: #a9b1d6;
     font-size: 26px;
     font-weight: 600;
@@ -42,8 +42,25 @@ nav h1 {
     padding: 0px;
 }
 
-nav h1, nav h2, nav h3 {
-    display: block;
+nav h1, nav h2, nav h3, summary h1 {
+    display: inline;
+}
+
+summary {
+    cursor: pointer;
+    display: list-item;
+}
+
+details > summary {
+    color: #9ece6a;
+    list-style: '+' inside;
+    font-weight: bold;
+}
+
+details[open] > summary {
+    color: #f7768e;
+    list-style: '-' inside;
+    font-weight: bold;
 }
 
 nav ol {

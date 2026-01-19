@@ -1,4 +1,5 @@
 use incodoc_to_html::doc_to_html_string;
+use incodoc_to_html::config::*;
 
 use md_to_incodoc::parse_md_to_incodoc;
 
@@ -77,6 +78,13 @@ for i in 0..10 {
 
 fn main() {
     let doc = parse_md_to_incodoc(INPUT);
-    println!("{}", doc_to_html_string(&doc));
+    let conf = Config {
+        nav: NavConfig {
+            skip: false,
+            close_top: true,
+            closed_depth: 1000,
+        },
+    };
+    println!("{}", doc_to_html_string(&doc, &conf));
 }
 

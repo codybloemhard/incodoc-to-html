@@ -2,13 +2,17 @@ use incodoc::*;
 
 use std::collections::{ HashSet, HashMap };
 
-pub fn doc_to_html_string(doc: &Doc) -> String {
+pub mod config;
+
+use config::*;
+
+pub fn doc_to_html_string(doc: &Doc, conf: &Config) -> String {
     let mut res = String::new();
-    doc_to_html(doc, &mut res);
+    doc_to_html(doc, conf, &mut res);
     res
 }
 
-pub fn doc_to_html(doc: &Doc, output: &mut String) {
+pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     *output += "<!DOCTYPE html>\n";
     *output += "<html";
     tags_to_html(&doc.tags, false, false, output);
@@ -29,7 +33,7 @@ pub fn doc_to_html(doc: &Doc, output: &mut String) {
     *output += "<body>\n";
     for item in &doc.items {
         match item {
-            DocItem::Nav(nav) => nav_to_html(nav, output),
+            DocItem::Nav(nav) => nav_to_html(nav, output, 0, &conf.nav),
             DocItem::Paragraph(par) => paragraph_to_html(par, output),
             DocItem::Section(section) => section_to_html(section, output),
         }
@@ -38,16 +42,28 @@ pub fn doc_to_html(doc: &Doc, output: &mut String) {
     *output += "</html>\n";
 }
 
-pub fn nav_to_html(nav: &Nav, output: &mut String) {
+pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfig) {
+    if conf.skip {
+        return;
+    }
     ensure_newline(output);
     *output += "<nav";
     tags_to_html(&nav.tags, true, false, output);
     *output += "\n";
-    if !nav.description.is_empty() {
-        *output += "<h1>\n";
-        *output += &nav.description;
-        *output += "\n</h1>\n";
+    *output += "<details ";
+    if depth < conf.closed_depth && !(depth == 0 && conf.close_top) {
+        *output += "open ";
     }
+    *output += "class=\"nav\">\n";
+    *output += "<summary>\n";
+    *output += "<h1>\n";
+    if !nav.description.is_empty() {
+        *output += &nav.description;
+    } else {
+        *output += "navigation";
+    }
+    *output += "\n</h1>\n";
+    *output += "</summary>\n";
     *output += "<ol>\n";
     for link in &nav.links {
         ensure_newline(output);
@@ -57,10 +73,11 @@ pub fn nav_to_html(nav: &Nav, output: &mut String) {
     }
     *output += "</ol>\n";
     for sub in &nav.subs {
-        nav_to_html(sub, output);
+        nav_to_html(sub, output, depth + 1, conf);
     }
     ensure_newline(output);
     *output += "</nav>\n";
+    *output += "</details>\n";
 }
 
 pub fn section_to_html(section: &Section, output: &mut String) {
