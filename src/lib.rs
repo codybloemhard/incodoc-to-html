@@ -13,24 +13,30 @@ pub fn doc_to_html_string(doc: &Doc, conf: &Config) -> String {
 }
 
 pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
-    *output += "<!DOCTYPE html>\n";
-    *output += "<html";
-    tags_to_html(&doc.tags, false, false, output);
-    string_prop_to_html("lang", &doc.props, output);
-    *output += ">\n";
-    *output += "<head>\n";
-    if let Some(PropVal::String(css)) = doc.props.get("css") {
-        *output += "<link rel=\"stylesheet\" type=\"text/css\" href=\"";
-        *output += css;
-        *output += "\">\n";
+    if !matches!(conf.include, Include::BodyOnly) {
+        *output += "<!DOCTYPE html>\n";
+        *output += "<html";
+        tags_to_html(&doc.tags, false, false, output);
+        string_prop_to_html("lang", &doc.props, output);
+        *output += ">\n";
+        *output += "<head>\n";
+        if let Some(PropVal::String(css)) = doc.props.get("css") {
+            *output += "<link rel=\"stylesheet\" type=\"text/css\" href=\"";
+            *output += css;
+            *output += "\">\n";
+        }
+        if let Some(PropVal::String(title)) = doc.props.get("title") {
+            *output += "<title>\n";
+            *output += title;
+            *output += "\n</title>\n";
+        }
+        *output += "</head>\n";
     }
-    if let Some(PropVal::String(title)) = doc.props.get("title") {
-        *output += "<title>\n";
-        *output += title;
-        *output += "\n</title>\n";
-    }
-    *output += "</head>\n";
     *output += "<body>\n";
+    if let Include::Augmented(pre, _) = &conf.include {
+        *output += pre;
+        ensure_newline(output);
+    }
     for item in &doc.items {
         match item {
             DocItem::Nav(nav) => nav_to_html(nav, output, 0, &conf.nav),
@@ -38,8 +44,14 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
             DocItem::Section(section) => section_to_html(section, output),
         }
     }
+    if let Include::Augmented(_, post) = &conf.include {
+        *output += post;
+        ensure_newline(output);
+    }
     *output += "</body>\n";
-    *output += "</html>\n";
+    if !matches!(conf.include, Include::BodyOnly) {
+        *output += "</html>\n";
+    }
 }
 
 pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfig) {

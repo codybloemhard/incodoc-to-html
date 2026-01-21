@@ -79,6 +79,7 @@ for i in 0..10 {
 fn main() {
     let doc = parse_md_to_incodoc(INPUT);
     let conf = Config {
+        include: Include::FullDocument,
         nav: NavConfig {
             skip: false,
             close_top: true,

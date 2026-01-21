@@ -10,11 +10,10 @@ Corporeal elements to be configurable.
 
 todo:
 
-- unconverted html
+- table of contents
 - static highlighted code
 - image collapse
 - heading collapse
-- wrap html in bigger html
+- unconverted html
 - block quote use html blockquote tag?
 - test deemphasis
-- table of contents

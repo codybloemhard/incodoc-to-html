@@ -1,7 +1,16 @@
 
-#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct Config {
     pub nav: NavConfig,
+    pub include: Include,
+}
+
+#[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub enum Include {
+    BodyOnly,
+    #[default]
+    FullDocument,
+    Augmented(String, String)
 }
 
 #[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
