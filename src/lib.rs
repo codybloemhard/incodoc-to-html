@@ -1,4 +1,5 @@
 use incodoc::*;
+use incodoc::actions::toc::*;
 
 use std::collections::{ HashSet, HashMap };
 
@@ -37,6 +38,15 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
         *output += pre;
         ensure_newline(output);
     }
+    let toc = doc.get_table_of_contents(&Some((
+        HashSet::from([
+            TableOfContentsItemType::Document,
+            TableOfContentsItemType::Section,
+            TableOfContentsItemType::FootnoteDefinition,
+        ]),
+        TableOfContentsFilterType::IncludeWithChildren
+    )));
+    top_toc_to_html(toc, output);
     for item in &doc.items {
         match item {
             DocItem::Nav(nav) => nav_to_html(nav, output, 0, &conf.nav),
@@ -51,6 +61,45 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     *output += "</body>\n";
     if !matches!(conf.include, Include::BodyOnly) {
         *output += "</html>\n";
+    }
+}
+
+pub fn top_toc_to_html(toc: Option<TableOfContentsItem>, output: &mut String) {
+    if let Some(toc) = toc && !toc.children.is_empty() {
+        ensure_newline(output);
+        *output += "<div class=\"table-of-contents\">\n";
+        *output += "<details open class\"table-of-contents\">\n";
+        *output += "<summary>\n";
+        *output += "<h1>\n";
+        *output += "table of contents";
+        *output += "</h1>\n";
+        *output += "</summary>\n";
+        toc_to_html(&toc, output);
+        *output += "</details>\n";
+        *output += "</div>\n";
+    }
+}
+
+pub fn toc_to_html(toc: &TableOfContentsItem, output: &mut String) {
+    if toc.item_type != TableOfContentsItemType::Document {
+        if toc.link.is_empty() {
+            *output += &toc.title;
+        } else {
+            *output += "<a href=\"#";
+            *output += &toc.link;
+            *output += "\">";
+            *output += &toc.title;
+            *output += "</a>\n";
+        }
+    }
+    if !toc.children.is_empty() {
+        *output += "<ul>\n";
+        for child in &toc.children {
+            *output += "<li>\n";
+            toc_to_html(child, output);
+            *output += "</li>\n";
+        }
+        *output += "</ul>\n";
     }
 }
 

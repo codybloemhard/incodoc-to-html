@@ -17,6 +17,25 @@ html {
     padding: 32px;
 }
 
+/* TABLES OF CONTENTS */
+
+div.table-of-contents {
+    border: 1px solid #a9b1d6;
+    background: #151620;
+    margin: 8px;
+    padding: 8px;
+}
+
+div.table-of-contents details summary h1 {
+    font-size: 26px;
+    font-weight: 600;
+}
+
+div.table-of-contents details a {
+    font-size: 24px;
+    font-weight: 200;
+}
+
 /* NAVIGATION */
 
 nav {
