@@ -80,7 +80,7 @@ for i in 0..10 {
 ";
 
 fn main() {
-    let doc = parse_md_to_incodoc(INPUT);
+    let mut doc = parse_md_to_incodoc(INPUT);
     let conf = Config {
         include: Include::FullDocument,
         nav: NavConfig {
@@ -89,7 +89,7 @@ fn main() {
             closed_depth: 1000,
         },
     };
-    println!("{}", doc_to_html_string(&doc, &conf));
+    println!("{}", doc_to_html_string(&mut doc, &conf));
     eprintln!("{:#?}", doc.get_table_of_contents(&Some((
         HashSet::from([
             TableOfContentsItemType::Document,

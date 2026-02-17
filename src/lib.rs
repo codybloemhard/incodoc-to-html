@@ -7,8 +7,9 @@ pub mod config;
 
 use config::*;
 
-pub fn doc_to_html_string(doc: &Doc, conf: &Config) -> String {
+pub fn doc_to_html_string(doc: &mut Doc, conf: &Config) -> String {
     let mut res = String::new();
+    doc.insert_table_of_contents_section_ids();
     doc_to_html(doc, conf, &mut res);
     res
 }
@@ -85,7 +86,7 @@ pub fn toc_to_html(toc: &TableOfContentsItem, output: &mut String) {
         if toc.link.is_empty() {
             *output += &toc.title;
         } else {
-            *output += "<a href=\"#";
+            *output += "<a href=\"";
             *output += &toc.link;
             *output += "\">";
             *output += &toc.title;
@@ -145,15 +146,7 @@ pub fn section_to_html(section: &Section, output: &mut String) {
     ensure_newline(output);
     *output += "<section";
     tags_to_html(&section.tags, false, false, output);
-    if let Some(PropVal::String(id)) = section.props.get("id") {
-        *output += " id=\"";
-        if section.tags.contains("footnote-def") && !id.is_empty() {
-            *output += &id[1..]; // remove starting '#' so that a link '#link' points to this id
-        } else {
-            *output += id;
-        }
-        *output += "\"";
-    }
+    string_prop_to_html("id", &section.props, output);
     *output += ">\n";
     let level = match section.heading.level {
         0 => "1",

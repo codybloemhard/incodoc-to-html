@@ -8,9 +8,8 @@ For more see: <https://github.com/codybloemhard/incodoc>
 
 Corporeal elements to be configurable.
 
-todo:
+might do:
 
-- table of contents
 - static highlighted code
 - image collapse
 - heading collapse
