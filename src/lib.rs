@@ -47,7 +47,10 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
         ]),
         TableOfContentsFilterType::IncludeWithChildren
     )));
-    top_toc_to_html(toc, output);
+    let meta_says_include_toc = if let Some(PropVal::String(s)) = doc.props.get("table-of-contents")
+        && s == "include" { true }
+    else { false };
+    top_toc_to_html(toc, output, &conf.table_of_contents, meta_says_include_toc);
     for item in &doc.items {
         match item {
             DocItem::Nav(nav) => nav_to_html(nav, output, 0, &conf.nav),
@@ -65,8 +68,14 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     }
 }
 
-pub fn top_toc_to_html(toc: Option<TableOfContentsItem>, output: &mut String) {
-    if let Some(toc) = toc && !toc.children.is_empty() {
+pub fn top_toc_to_html(
+    toc: Option<TableOfContentsItem>,
+    output: &mut String,
+    conf: &TableOfContentsConfig,
+    meta_says_include: bool,
+) {
+    let include = conf.include != TableOfContentsInclusion::Exclude && meta_says_include;
+    if let Some(toc) = toc && !toc.children.is_empty() && include {
         ensure_newline(output);
         *output += "<div class=\"table-of-contents\">\n";
         *output += "<details open class\"table-of-contents\">\n";
@@ -105,7 +114,7 @@ pub fn toc_to_html(toc: &TableOfContentsItem, output: &mut String) {
 }
 
 pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfig) {
-    if conf.skip {
+    if !conf.include {
         return;
     }
     ensure_newline(output);

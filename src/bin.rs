@@ -11,6 +11,8 @@ const INPUT: &str =
 +++
 prop lang en
 prop css style.css
+prop table-of-contents include
+
 nav l0
   link link text $ url
   nav l1
@@ -84,9 +86,13 @@ fn main() {
     let conf = Config {
         include: Include::FullDocument,
         nav: NavConfig {
-            skip: false,
+            include: true,
             close_top: true,
             closed_depth: 1000,
+        },
+        table_of_contents: TableOfContentsConfig {
+            closed: false,
+            include: TableOfContentsInclusion::IfSuggested,
         },
     };
     println!("{}", doc_to_html_string(&mut doc, &conf));
