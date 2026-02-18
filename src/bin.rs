@@ -1,10 +1,7 @@
 use incodoc_to_html::doc_to_html_string;
 use incodoc_to_html::config::*;
 
-use incodoc::actions::toc::*;
 use md_to_incodoc::parse_md_to_incodoc;
-
-use std::collections::HashSet;
 
 const INPUT: &str =
 "
@@ -89,20 +86,14 @@ fn main() {
             include: true,
             close_top: true,
             closed_depth: 1000,
+            position: NavPosition::Bottom,
         },
         table_of_contents: TableOfContentsConfig {
             closed: false,
             include: TableOfContentsInclusion::IfSuggested,
+            position: TableOfContentsPosition::BeforeFirstSubSection,
         },
     };
     println!("{}", doc_to_html_string(&mut doc, &conf));
-    eprintln!("{:#?}", doc.get_table_of_contents(&Some((
-        HashSet::from([
-            TableOfContentsItemType::Document,
-            TableOfContentsItemType::Section,
-            TableOfContentsItemType::FootnoteDefinition,
-        ]),
-        TableOfContentsFilterType::IncludeWithChildren
-    ))));
 }
 

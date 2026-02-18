@@ -14,6 +14,8 @@ pub fn doc_to_html_string(doc: &mut Doc, conf: &Config) -> String {
     res
 }
 
+pub type Blobs<'a> = (Option<&'a str>, Option<&'a str>);
+
 pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     if !matches!(conf.include, Include::BodyOnly) {
         *output += "<!DOCTYPE html>\n";
@@ -39,6 +41,18 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
         *output += pre;
         ensure_newline(output);
     }
+    let mut nav = String::new();
+    let nav_og_pos = conf.nav.position == NavPosition::OriginalPosition;
+    if !nav_og_pos {
+        for item in &doc.items {
+            if let DocItem::Nav(n) = item {
+                nav_to_html(n, &mut nav, 0, &conf.nav);
+            }
+        }
+    }
+    if conf.nav.position == NavPosition::Top {
+        *output += &nav;
+    }
     let toc = doc.get_table_of_contents(&Some((
         HashSet::from([
             TableOfContentsItemType::Document,
@@ -50,13 +64,31 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     let meta_says_include_toc = if let Some(PropVal::String(s)) = doc.props.get("table-of-contents")
         && s == "include" { true }
     else { false };
-    top_toc_to_html(toc, output, &conf.table_of_contents, meta_says_include_toc);
+    let toc = top_toc_to_html(toc, &conf.table_of_contents, meta_says_include_toc);
+    if conf.table_of_contents.position == TableOfContentsPosition::Top {
+        *output += &toc;
+    }
+    let blobs = (
+        if conf.table_of_contents.position == TableOfContentsPosition::BeforeFirstSubSection {
+            Some(toc.as_str())
+        } else {
+            None
+        },
+        if conf.nav.position == NavPosition::BeforeFirstSubSection { Some(nav.as_str()) }
+        else { None }
+    );
     for item in &doc.items {
         match item {
-            DocItem::Nav(nav) => nav_to_html(nav, output, 0, &conf.nav),
+            DocItem::Nav(nav) => if nav_og_pos { nav_to_html(nav, output, 0, &conf.nav) },
             DocItem::Paragraph(par) => paragraph_to_html(par, output),
-            DocItem::Section(section) => section_to_html(section, output),
+            DocItem::Section(section) => section_to_html(section, output, blobs),
         }
+    }
+    if conf.table_of_contents.position == TableOfContentsPosition::Bottom {
+        *output += &toc;
+    }
+    if conf.nav.position == NavPosition::Bottom {
+        *output += &nav;
     }
     if let Include::Augmented(_, post) = &conf.include {
         *output += post;
@@ -70,24 +102,25 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
 
 pub fn top_toc_to_html(
     toc: Option<TableOfContentsItem>,
-    output: &mut String,
     conf: &TableOfContentsConfig,
     meta_says_include: bool,
-) {
+) -> String {
+    let mut res = String::new();
     let include = conf.include != TableOfContentsInclusion::Exclude && meta_says_include;
     if let Some(toc) = toc && !toc.children.is_empty() && include {
-        ensure_newline(output);
-        *output += "<div class=\"table-of-contents\">\n";
-        *output += "<details open class\"table-of-contents\">\n";
-        *output += "<summary>\n";
-        *output += "<h1>\n";
-        *output += "table of contents";
-        *output += "</h1>\n";
-        *output += "</summary>\n";
-        toc_to_html(&toc, output);
-        *output += "</details>\n";
-        *output += "</div>\n";
+        ensure_newline(&mut res);
+        res += "<div class=\"table-of-contents\">\n";
+        res += "<details open class\"table-of-contents\">\n";
+        res += "<summary>\n";
+        res += "<h1>\n";
+        res += "table of contents";
+        res += "</h1>\n";
+        res += "</summary>\n";
+        toc_to_html(&toc, &mut res);
+        res += "</details>\n";
+        res += "</div>\n";
     }
+    res
 }
 
 pub fn toc_to_html(toc: &TableOfContentsItem, output: &mut String) {
@@ -151,7 +184,7 @@ pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfi
     *output += "</details>\n";
 }
 
-pub fn section_to_html(section: &Section, output: &mut String) {
+pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
     ensure_newline(output);
     *output += "<section";
     tags_to_html(&section.tags, false, false, output);
@@ -181,7 +214,20 @@ pub fn section_to_html(section: &Section, output: &mut String) {
     for item in &section.items {
         match item {
             SectionItem::Paragraph(par) => paragraph_to_html(par, output),
-            SectionItem::Section(section) => section_to_html(section, output),
+            SectionItem::Section(section) => {
+                if !section.tags.contains("blockquote")
+                    && !section.tags.contains("blockquote-typed")
+                    && !section.tags.contains("footnote-def")
+                {
+                    if let (_, Some(nav)) = blobs {
+                        *output += nav;
+                    }
+                    if let (Some(toc), _) = blobs {
+                        *output += toc;
+                    }
+                }
+                section_to_html(section, output, (None, None));
+            },
         }
     }
     ensure_newline(output);
