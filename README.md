@@ -10,6 +10,7 @@ Corporeal elements to be configurable.
 
 might do:
 
+- multiple css
 - static highlighted code
 - image collapse
 - heading collapse

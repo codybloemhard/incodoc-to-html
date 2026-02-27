@@ -110,7 +110,7 @@ pub fn top_toc_to_html(
     if let Some(toc) = toc && !toc.children.is_empty() && include {
         ensure_newline(&mut res);
         res += "<div class=\"table-of-contents\">\n";
-        res += "<details open class\"table-of-contents\">\n";
+        res += "<details open class=\"table-of-contents\">\n";
         res += "<summary>\n";
         res += "<h1>\n";
         res += "table of contents";
@@ -211,6 +211,7 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
     *output += "\n</h";
     *output += level;
     *output += ">\n";
+    let mut blobs_written = false;
     for item in &section.items {
         match item {
             SectionItem::Paragraph(par) => paragraph_to_html(par, output),
@@ -218,6 +219,7 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
                 if !section.tags.contains("blockquote")
                     && !section.tags.contains("blockquote-typed")
                     && !section.tags.contains("footnote-def")
+                    && !blobs_written
                 {
                     if let (_, Some(nav)) = blobs {
                         *output += nav;
@@ -225,6 +227,7 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
                     if let (Some(toc), _) = blobs {
                         *output += toc;
                     }
+                    blobs_written = true;
                 }
                 section_to_html(section, output, (None, None));
             },
