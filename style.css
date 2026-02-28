@@ -36,6 +36,10 @@ div.table-of-contents details a {
     font-weight: 200;
 }
 
+div.table-of-contents ul li::marker {
+    content: "- ";
+}
+
 /* NAVIGATION */
 
 nav {
@@ -202,13 +206,24 @@ span.strong-de {
 
 ol, ul {
     list-style-position: outside;
-    padding-left: 1.2em;
     margin: 0px;
 }
 
-li:not(nav ol li)::marker {
-    content: "- ";
+ul {
+    padding-left: 1.2em;
+}
+
+ol {
+    padding-inline-start: 64px;
+}
+
+li:not(nav ol li, div.table-of-contents ul li)::marker {
     color: #bb9af7;
+}
+
+li:not(nav ol li, ol li, div.table-of-contents ul li)::marker {
+    content: "- ";
+    font-weight: 900;
 }
 
 ul.checked-list > li::marker {
