@@ -3,6 +3,11 @@ use incodoc_to_html::config::*;
 
 use md_to_incodoc::parse_md_to_incodoc;
 
+use incodoc::actions::toc::TableOfContentsItemType;
+use incodoc::actions::toc::TableOfContentsFilterType;
+
+use std::collections::HashSet;
+
 const INPUT: &str =
 "
 +++
@@ -95,6 +100,14 @@ fn main() {
             closed: false,
             include: TableOfContentsInclusion::IfSuggested,
             position: Position::BeforeFirstSubSection,
+            filter: Some((
+                HashSet::from([
+                    TableOfContentsItemType::Document,
+                    TableOfContentsItemType::Section,
+                    TableOfContentsItemType::FootnoteDefinition,
+                ]),
+                TableOfContentsFilterType::IncludeWithChildren
+            )),
         },
     };
     println!("{}", doc_to_html_string(&mut doc, &conf));

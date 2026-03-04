@@ -1,5 +1,8 @@
+use std::collections::HashSet;
+use incodoc::actions::toc::TableOfContentsItemType;
+use incodoc::actions::toc::TableOfContentsFilterType;
 
-#[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Default, Debug, Eq, PartialEq)]
 pub struct Config {
     pub nav: NavConfig,
     pub table_of_contents: TableOfContentsConfig,
@@ -22,11 +25,12 @@ pub struct NavConfig {
     pub position: Position,
 }
 
-#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Default, Debug, Eq, PartialEq)]
 pub struct TableOfContentsConfig {
     pub closed: bool,
     pub include: TableOfContentsInclusion,
     pub position: Position,
+    pub filter: Option<(HashSet<TableOfContentsItemType>, TableOfContentsFilterType)>,
 }
 
 #[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]

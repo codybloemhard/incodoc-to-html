@@ -48,14 +48,7 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     if conf.nav.position == Position::Top {
         *output += &nav;
     }
-    let toc = doc.get_table_of_contents(&Some((
-        HashSet::from([
-            TableOfContentsItemType::Document,
-            TableOfContentsItemType::Section,
-            TableOfContentsItemType::FootnoteDefinition,
-        ]),
-        TableOfContentsFilterType::IncludeWithChildren
-    )));
+    let toc = doc.get_table_of_contents(&conf.table_of_contents.filter);
     let meta_says_include_toc = if let Some(PropVal::String(s)) = doc.props.get("table-of-contents")
         && s == "include" { true }
     else { false };
