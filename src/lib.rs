@@ -42,15 +42,10 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
         ensure_newline(output);
     }
     let mut nav = String::new();
-    let nav_og_pos = conf.nav.position == NavPosition::OriginalPosition;
-    if !nav_og_pos {
-        for item in &doc.items {
-            if let DocItem::Nav(n) = item {
-                nav_to_html(n, &mut nav, 0, &conf.nav);
-            }
-        }
+    for n in &doc.navs {
+        nav_to_html(n, &mut nav, 0, &conf.nav);
     }
-    if conf.nav.position == NavPosition::Top {
+    if conf.nav.position == Position::Top {
         *output += &nav;
     }
     let toc = doc.get_table_of_contents(&Some((
@@ -65,29 +60,28 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
         && s == "include" { true }
     else { false };
     let toc = top_toc_to_html(toc, &conf.table_of_contents, meta_says_include_toc);
-    if conf.table_of_contents.position == TableOfContentsPosition::Top {
+    if conf.table_of_contents.position == Position::Top {
         *output += &toc;
     }
     let blobs = (
-        if conf.table_of_contents.position == TableOfContentsPosition::BeforeFirstSubSection {
+        if conf.table_of_contents.position == Position::BeforeFirstSubSection {
             Some(toc.as_str())
         } else {
             None
         },
-        if conf.nav.position == NavPosition::BeforeFirstSubSection { Some(nav.as_str()) }
+        if conf.nav.position == Position::BeforeFirstSubSection { Some(nav.as_str()) }
         else { None }
     );
     for item in &doc.items {
         match item {
-            DocItem::Nav(nav) => if nav_og_pos { nav_to_html(nav, output, 0, &conf.nav) },
             DocItem::Paragraph(par) => paragraph_to_html(par, output),
             DocItem::Section(section) => section_to_html(section, output, blobs),
         }
     }
-    if conf.table_of_contents.position == TableOfContentsPosition::Bottom {
+    if conf.table_of_contents.position == Position::Bottom {
         *output += &toc;
     }
-    if conf.nav.position == NavPosition::Bottom {
+    if conf.nav.position == Position::Bottom {
         *output += &nav;
     }
     if let Include::Augmented(_, post) = &conf.include {

@@ -89,12 +89,12 @@ fn main() {
             include: true,
             close_top: true,
             closed_depth: 1000,
-            position: NavPosition::Bottom,
+            position: Position::Bottom,
         },
         table_of_contents: TableOfContentsConfig {
             closed: false,
             include: TableOfContentsInclusion::IfSuggested,
-            position: TableOfContentsPosition::BeforeFirstSubSection,
+            position: Position::BeforeFirstSubSection,
         },
     };
     println!("{}", doc_to_html_string(&mut doc, &conf));

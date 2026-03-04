@@ -19,23 +19,14 @@ pub struct NavConfig {
     pub include: bool,
     pub close_top: bool,
     pub closed_depth: usize,
-    pub position: NavPosition,
-}
-
-#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
-pub enum NavPosition {
-    #[default]
-    Top,
-    Bottom,
-    BeforeFirstSubSection,
-    OriginalPosition,
+    pub position: Position,
 }
 
 #[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct TableOfContentsConfig {
     pub closed: bool,
     pub include: TableOfContentsInclusion,
-    pub position: TableOfContentsPosition,
+    pub position: Position,
 }
 
 #[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -47,7 +38,7 @@ pub enum TableOfContentsInclusion {
 }
 
 #[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
-pub enum TableOfContentsPosition {
+pub enum Position {
     #[default]
     Top,
     Bottom,
