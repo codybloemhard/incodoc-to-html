@@ -7,6 +7,7 @@ pub struct Config {
     pub nav: NavConfig,
     pub table_of_contents: TableOfContentsConfig,
     pub include: Include,
+    pub header_links: Vec<HeaderLink>,
 }
 
 #[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -49,3 +50,14 @@ pub enum Position {
     BeforeFirstSubSection,
 }
 
+#[derive(Clone, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub enum HeaderLink {
+    Css {
+        href: String,
+    },
+    General {
+        rel: String,
+        ltype: String,
+        href: String,
+    }
+}

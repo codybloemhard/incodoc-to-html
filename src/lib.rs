@@ -25,9 +25,10 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
         *output += ">\n";
         *output += "<head>\n";
         if let Some(PropVal::String(css)) = doc.props.get("css") {
-            *output += "<link rel=\"stylesheet\" type=\"text/css\" href=\"";
-            *output += css;
-            *output += "\">\n";
+            header_link_to_html(&HeaderLink::Css{ href: css.to_string() }, output);
+        }
+        for link in &conf.header_links {
+            header_link_to_html(link, output);
         }
         if let Some(PropVal::String(title)) = doc.props.get("title") {
             *output += "<title>\n";
@@ -84,6 +85,25 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     *output += "</body>\n";
     if !matches!(conf.include, Include::BodyOnly) {
         *output += "</html>\n";
+    }
+}
+
+pub fn header_link_to_html(hlink: &HeaderLink, output: &mut String) {
+    *output += "<link rel=\"";
+    match hlink {
+        HeaderLink::Css { href } => {
+            *output += "stylesheet\" type=\"text/css\" href=\"";
+            *output += href;
+            *output += "\">\n";
+        },
+        HeaderLink::General { rel, ltype, href } => {
+            *output += rel;
+            *output += "\" type=\"";
+            *output += ltype;
+            *output += "\" href=\"";
+            *output += href;
+            *output += "\">\n";
+        },
     }
 }
 

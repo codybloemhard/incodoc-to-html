@@ -90,6 +90,7 @@ fn main() {
     let mut doc = parse_md_to_incodoc(INPUT);
     let conf = Config {
         include: Include::FullDocument,
+        header_links: vec![],
         nav: NavConfig {
             include: true,
             close_top: true,
