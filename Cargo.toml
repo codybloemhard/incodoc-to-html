@@ -15,10 +15,10 @@ name = "testbin"
 path = "src/bin.rs"
 
 [dependencies]
-incodoc = "0.6.2"
+incodoc = "0.7.0"
 # incodoc = { path = "../incodoc" }
 
 [dev-dependencies]
-md-to-incodoc = "0.3.1"
+md-to-incodoc = "0.3.2"
 # md-to-incodoc = { path = "../md-to-incodoc" }
 

@@ -22,7 +22,8 @@ html {
 div.table-of-contents {
     border: 1px solid #a9b1d6;
     background: #151620;
-    margin: 8px;
+    margin-top: 8px;
+    margin-bottom: 8px;
     padding: 8px;
 }
 

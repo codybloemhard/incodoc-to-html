@@ -1,5 +1,6 @@
 use incodoc::*;
 use incodoc::actions::toc::*;
+use incodoc::actions::deemphasise::DeEmphasise;
 
 use std::collections::{ HashSet, HashMap };
 
@@ -211,8 +212,8 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
     *output += "\n";
     for item in &section.heading.items {
         match item {
-            HeadingItem::String(string) => *output += string,
-            HeadingItem::Em(emphasis) => emphasis_to_html(emphasis, output),
+            EmOrText::Text(string) => *output += string,
+            EmOrText::Em(emphasis) => emphasis_to_html(emphasis, output),
         }
     }
     *output += "\n</h";
@@ -302,8 +303,8 @@ pub fn link_to_html(link: &Link, output: &mut String) {
     tags_to_html(&link.tags, true, false, output);
     for item in &link.items {
         match item {
-            LinkItem::String(text) => *output += text,
-            LinkItem::Em(em) => emphasis_to_html(em, output),
+            EmOrText::Text(text) => *output += text,
+            EmOrText::Em(em) => emphasis_to_html(em, output),
         }
     }
     *output += "</a>";
@@ -313,12 +314,7 @@ pub fn image_to_html(link: &Link, output: &mut String) {
     *output += "<img src=\"";
     *output += &link.url;
     *output += "\" alt=\"";
-    for item in &link.items {
-        match item {
-            LinkItem::String(text) => *output += text,
-            LinkItem::Em(em) => *output += &em.text,
-        }
-    }
+    *output += &link.items.deemphasise();
     *output += "\">";
 }
 
