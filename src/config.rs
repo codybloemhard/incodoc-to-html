@@ -8,6 +8,7 @@ pub struct Config {
     pub table_of_contents: TableOfContentsConfig,
     pub include: Include,
     pub header_links: Vec<HeaderLink>,
+    pub links: LinksConfig,
 }
 
 #[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -60,4 +61,10 @@ pub enum HeaderLink {
         ltype: String,
         href: String,
     }
+}
+
+#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub struct LinksConfig {
+    pub local_links_open_in_blank: bool,
+    pub footnote_ref_links_open_in_blank: bool,
 }

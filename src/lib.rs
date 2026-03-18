@@ -45,7 +45,7 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     }
     let mut nav = String::new();
     for n in &doc.navs {
-        nav_to_html(n, &mut nav, 0, &conf.nav);
+        nav_to_html(n, &mut nav, 0, &conf.nav, &conf.links);
     }
     if conf.nav.position == Position::Top {
         *output += &nav;
@@ -69,8 +69,8 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     );
     for item in &doc.items {
         match item {
-            DocItem::Paragraph(par) => paragraph_to_html(par, output),
-            DocItem::Section(section) => section_to_html(section, output, blobs),
+            DocItem::Paragraph(par) => paragraph_to_html(par, &conf.links, output),
+            DocItem::Section(section) => section_to_html(section, &conf.links, output, blobs),
         }
     }
     if conf.table_of_contents.position == Position::Bottom {
@@ -154,8 +154,10 @@ pub fn toc_to_html(toc: &TableOfContentsItem, output: &mut String) {
     }
 }
 
-pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfig) {
-    if !conf.include {
+pub fn nav_to_html(
+    nav: &Nav, output: &mut String, depth: usize, nconf: &NavConfig, lconf: &LinksConfig
+) {
+    if !nconf.include {
         return;
     }
     ensure_newline(output);
@@ -163,7 +165,7 @@ pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfi
     tags_to_html(&nav.tags, true, false, output);
     *output += "\n";
     *output += "<details ";
-    if depth < conf.closed_depth && !(depth == 0 && conf.close_top) {
+    if depth < nconf.closed_depth && !(depth == 0 && nconf.close_top) {
         *output += "open ";
     }
     *output += "class=\"nav\">\n";
@@ -180,19 +182,19 @@ pub fn nav_to_html(nav: &Nav, output: &mut String, depth: usize, conf: &NavConfi
     for link in &nav.links {
         ensure_newline(output);
         *output += "<li>\n";
-        link_to_html(link, output);
+        link_to_html(link, lconf, output);
         *output += "\n</li>\n";
     }
     *output += "</ol>\n";
     for sub in &nav.subs {
-        nav_to_html(sub, output, depth + 1, conf);
+        nav_to_html(sub, output, depth + 1, nconf, lconf);
     }
     ensure_newline(output);
     *output += "</nav>\n";
     *output += "</details>\n";
 }
 
-pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
+pub fn section_to_html(section: &Section, conf: &LinksConfig, output: &mut String, blobs: Blobs) {
     ensure_newline(output);
     *output += "<section";
     tags_to_html(&section.tags, false, false, output);
@@ -222,7 +224,7 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
     let mut blobs_written = false;
     for item in &section.items {
         match item {
-            SectionItem::Paragraph(par) => paragraph_to_html(par, output),
+            SectionItem::Paragraph(par) => paragraph_to_html(par, conf, output),
             SectionItem::Section(section) => {
                 if !section.tags.contains("blockquote")
                     && !section.tags.contains("blockquote-typed")
@@ -237,7 +239,7 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
                     }
                     blobs_written = true;
                 }
-                section_to_html(section, output, (None, None));
+                section_to_html(section, conf, output, (None, None));
             },
         }
     }
@@ -245,7 +247,7 @@ pub fn section_to_html(section: &Section, output: &mut String, blobs: Blobs) {
     *output += "</section>\n";
 }
 
-pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
+pub fn paragraph_to_html(par: &Paragraph, conf: &LinksConfig, output: &mut String) {
     ensure_newline(output);
     *output += "<p";
     tags_to_html(&par.tags, true, false, output);
@@ -255,10 +257,10 @@ pub fn paragraph_to_html(par: &Paragraph, output: &mut String) {
             ParagraphItem::Text(text) => *output += text,
             ParagraphItem::MText(mtext) => mtext_to_html(mtext, output),
             ParagraphItem::Em(emphasis) => emphasis_to_html(emphasis, output),
-            ParagraphItem::Link(link) => link_to_html(link, output),
+            ParagraphItem::Link(link) => link_to_html(link, conf, output),
             ParagraphItem::Code(code) => code_to_html(code, output),
-            ParagraphItem::List(list) => list_to_html(list, output),
-            ParagraphItem::Table(table) => table_to_html(table, output),
+            ParagraphItem::List(list) => list_to_html(list, conf, output),
+            ParagraphItem::Table(table) => table_to_html(table, conf, output),
         }
     }
     ensure_newline(output);
@@ -285,7 +287,7 @@ pub fn mtext_to_html(TextWithMeta { text, tags, .. }: &TextWithMeta, output: &mu
     *output += ">";
 }
 
-pub fn link_to_html(link: &Link, output: &mut String) {
+pub fn link_to_html(link: &Link, conf: &LinksConfig, output: &mut String) {
     if link.tags.contains("image") {
         image_to_html(link, output);
         return;
@@ -294,8 +296,18 @@ pub fn link_to_html(link: &Link, output: &mut String) {
     *output += "href=\"";
     *output += &link.url;
     *output += "\" target=\"";
-    if link.tags.contains("footnote-ref") {
-        *output += "_self";
+    if link.tags.contains("local") {
+        if conf.local_links_open_in_blank {
+            *output += "_blank";
+        } else {
+            *output += "_self";
+        }
+    } else if link.tags.contains("footnote-ref") {
+        if conf.footnote_ref_links_open_in_blank {
+            *output += "_blank";
+        } else {
+            *output += "_self";
+        }
     } else {
         *output += "_blank";
     }
@@ -318,7 +330,7 @@ pub fn image_to_html(link: &Link, output: &mut String) {
     *output += "\">";
 }
 
-pub fn list_to_html(list: &List, output: &mut String) {
+pub fn list_to_html(list: &List, conf: &LinksConfig, output: &mut String) {
     ensure_newline(output);
     let list_tag = match list.ltype {
         ListType::Distinct => "ol",
@@ -337,7 +349,7 @@ pub fn list_to_html(list: &List, output: &mut String) {
             *output += " class=\"checked-list-item\"";
         }
         *output += ">\n";
-        paragraph_to_html(par, output);
+        paragraph_to_html(par, conf, output);
         *output += "</li>\n";
     }
     *output += "</";
@@ -345,7 +357,7 @@ pub fn list_to_html(list: &List, output: &mut String) {
     *output += ">\n";
 }
 
-pub fn table_to_html(table: &Table, output: &mut String) {
+pub fn table_to_html(table: &Table, conf: &LinksConfig, output: &mut String) {
     ensure_newline(output);
     *output += "<table";
     tags_to_html(&table.tags, true, false, output);
@@ -361,7 +373,7 @@ pub fn table_to_html(table: &Table, output: &mut String) {
             *output += "<";
             *output += item_tag;
             *output += ">\n";
-            paragraph_to_html(par, output);
+            paragraph_to_html(par, conf, output);
             *output += "</";
             *output += item_tag;
             *output += ">\n";

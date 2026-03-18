@@ -110,6 +110,10 @@ fn main() {
                 TableOfContentsFilterType::IncludeWithChildren
             )),
         },
+        links: LinksConfig {
+            local_links_open_in_blank: false,
+            footnote_ref_links_open_in_blank: false,
+        },
     };
     println!("{}", doc_to_html_string(&mut doc, &conf));
 }

@@ -1,6 +1,6 @@
 [package]
 name = "incodoc-to-html"
-version = "0.1.0"
+version = "0.2.0"
 edition = "2024"
 authors = ["Cody Bloemhard <codybloemhard@gmail.com>"]
 description = "Convert incodoc to html."
@@ -15,10 +15,10 @@ name = "testbin"
 path = "src/bin.rs"
 
 [dependencies]
-incodoc = "0.7.0"
+incodoc = "0.8.0"
 # incodoc = { path = "../incodoc" }
 
 [dev-dependencies]
-md-to-incodoc = "0.3.2"
+md-to-incodoc = "0.3.3"
 # md-to-incodoc = { path = "../md-to-incodoc" }
 
