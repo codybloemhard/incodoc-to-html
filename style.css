@@ -5,6 +5,10 @@
     padding: 0;
 }
 
+::selection {
+    background: #414868;
+}
+
 html {
     color: #a9b1d6;
     background: #1a1b26;
@@ -115,6 +119,11 @@ p {
     padding: 0px;
 }
 
+section > p {
+    padding-top: 8px;
+    padding-bottom: 8px;
+}
+
 /* HEADERS */
 
 h1, h2, h3 {
@@ -159,9 +168,13 @@ h1, h2, h3, h4, h5, h6 {
 /* LINKS */
 
 a {
-    color: #bb9af7;
+    color: #f7768e;
     font-weight: 600;
     text-decoration: none;
+}
+
+a.local, details a {
+    color: #bb9af7;
 }
 
 a.footnote-ref {
@@ -295,20 +308,22 @@ img {
 
 .blockquote, .blockquote-typed {
     border-left: 2px solid #a9b1d6;
-    margin-top: 8px;
-    margin-bottom: 8px;
     padding: 8px;
+}
+
+.blockquote p {
+    padding-top: 0px;
+    padding-bottom: 0px;
 }
 
 /* FOOTNOTES */
 
 .footnote-def {
     background: #151620;
-    margin-top: 8px;
-    margin-bottom: 8px;
     padding: 8px;
 }
 
 .footnote-def h6 {
     color: #7aa2f7;
 }
+
