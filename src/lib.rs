@@ -69,8 +69,8 @@ pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
     );
     for item in &doc.items {
         match item {
-            DocItem::Paragraph(par) => paragraph_to_html(par, &conf.links, output),
-            DocItem::Section(section) => section_to_html(section, &conf.links, output, blobs),
+            DocItem::Paragraph(par) => paragraph_to_html(par, conf, output),
+            DocItem::Section(section) => section_to_html(section, conf, output, blobs),
         }
     }
     if conf.table_of_contents.position == Position::Bottom {
@@ -194,7 +194,9 @@ pub fn nav_to_html(
     *output += "</details>\n";
 }
 
-pub fn section_to_html(section: &Section, conf: &LinksConfig, output: &mut String, blobs: Blobs) {
+pub fn section_to_html(
+    section: &Section, conf: &Config, output: &mut String, blobs: Blobs
+) {
     ensure_newline(output);
     *output += "<section";
     tags_to_html(&section.tags, false, false, output);
@@ -247,24 +249,69 @@ pub fn section_to_html(section: &Section, conf: &LinksConfig, output: &mut Strin
     *output += "</section>\n";
 }
 
-pub fn paragraph_to_html(par: &Paragraph, conf: &LinksConfig, output: &mut String) {
+pub fn paragraph_to_html(par: &Paragraph, conf: &Config, output: &mut String) {
     ensure_newline(output);
-    *output += "<p";
-    tags_to_html(&par.tags, true, false, output);
-    *output += "\n";
+    let (big, small) = conf.paragraphs.split();
+    if big {
+        *output += "<div";
+        tag_and_tags_to_html("big-par", &par.tags, output);
+        *output += "\n";
+    }
+    let mut started = false;
+    let start_par = |started: &mut bool, output: &mut String| {
+        if small && !*started {
+            if big {
+                *output += "<p>";
+            } else {
+                *output += "<p";
+                tags_to_html(&par.tags, true, false, output);
+            }
+            *output += "\n";
+            *started = true;
+        }
+    };
+    let end_par = |started: &mut bool, output: &mut String| {
+        if small && *started {
+            *output += "\n</p>\n";
+            *started = false;
+        }
+    };
     for item in &par.items {
         match item {
-            ParagraphItem::Text(text) => *output += text,
-            ParagraphItem::MText(mtext) => mtext_to_html(mtext, output),
-            ParagraphItem::Em(emphasis) => emphasis_to_html(emphasis, output),
-            ParagraphItem::Link(link) => link_to_html(link, conf, output),
-            ParagraphItem::Code(code) => code_to_html(code, output),
-            ParagraphItem::List(list) => list_to_html(list, conf, output),
-            ParagraphItem::Table(table) => table_to_html(table, conf, output),
+            ParagraphItem::Text(text) => {
+                start_par(&mut started, output);
+                *output += text;
+            },
+            ParagraphItem::MText(mtext) => {
+                start_par(&mut started, output);
+                mtext_to_html(mtext, output);
+            },
+            ParagraphItem::Em(emphasis) => {
+                start_par(&mut started, output);
+                emphasis_to_html(emphasis, output);
+            },
+            ParagraphItem::Link(link) => {
+                start_par(&mut started, output);
+                link_to_html(link, &conf.links, output);
+            },
+            ParagraphItem::Code(code) => {
+                end_par(&mut started, output);
+                code_to_html(code, output);
+            },
+            ParagraphItem::List(list) => {
+                end_par(&mut started, output);
+                list_to_html(list, conf, output);
+            },
+            ParagraphItem::Table(table) => {
+                end_par(&mut started, output);
+                table_to_html(table, conf, output);
+            },
         }
     }
     ensure_newline(output);
-    *output += "</p>\n";
+    if big {
+        *output += "</div>\n";
+    }
 }
 
 pub fn mtext_to_html(TextWithMeta { text, tags, .. }: &TextWithMeta, output: &mut String) {
@@ -330,7 +377,7 @@ pub fn image_to_html(link: &Link, output: &mut String) {
     *output += "\">";
 }
 
-pub fn list_to_html(list: &List, conf: &LinksConfig, output: &mut String) {
+pub fn list_to_html(list: &List, conf: &Config, output: &mut String) {
     ensure_newline(output);
     let list_tag = match list.ltype {
         ListType::Distinct => "ol",
@@ -357,7 +404,7 @@ pub fn list_to_html(list: &List, conf: &LinksConfig, output: &mut String) {
     *output += ">\n";
 }
 
-pub fn table_to_html(table: &Table, conf: &LinksConfig, output: &mut String) {
+pub fn table_to_html(table: &Table, conf: &Config, output: &mut String) {
     ensure_newline(output);
     *output += "<table";
     tags_to_html(&table.tags, true, false, output);
@@ -429,6 +476,19 @@ pub fn tags_to_html(tags: &HashSet<String>, end_tag: bool, backslash: bool, outp
         }
         *output += ">";
     }
+}
+
+pub fn tag_and_tags_to_html(tag: &str, tags: &HashSet<String>, output: &mut String) {
+    *output += " class=\"";
+    *output += tag;
+    *output += " ";
+    if !tags.is_empty() {
+        for tag in tags {
+            *output += tag;
+            *output += " ";
+        }
+    }
+    *output += "\">";
 }
 
 pub fn string_prop_to_html(prop: &str, props: &HashMap<String, PropVal>, output: &mut String) {

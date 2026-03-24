@@ -114,6 +114,7 @@ fn main() {
             local_links_open_in_blank: false,
             footnote_ref_links_open_in_blank: false,
         },
+        paragraphs: ParagraphsConfig::JustSmallParagraphs,
     };
     println!("{}", doc_to_html_string(&mut doc, &conf));
 }

@@ -9,6 +9,7 @@ pub struct Config {
     pub include: Include,
     pub header_links: Vec<HeaderLink>,
     pub links: LinksConfig,
+    pub paragraphs: ParagraphsConfig,
 }
 
 #[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
@@ -67,4 +68,22 @@ pub enum HeaderLink {
 pub struct LinksConfig {
     pub local_links_open_in_blank: bool,
     pub footnote_ref_links_open_in_blank: bool,
+}
+
+#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+pub enum ParagraphsConfig {
+    #[default]
+    JustBigParagraphs,
+    JustSmallParagraphs,
+    BigAndSmallParagraphs,
+}
+
+impl ParagraphsConfig {
+    pub fn split(&self) -> (bool, bool) {
+        match self {
+            Self::JustBigParagraphs => (true, false),
+            Self::JustSmallParagraphs => (false, true),
+            _ => (true, true),
+        }
+    }
 }
