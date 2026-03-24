@@ -113,6 +113,7 @@ fn main() {
         links: LinksConfig {
             local_links_open_in_blank: false,
             footnote_ref_links_open_in_blank: false,
+            footnote_ref_prefix: "^".to_string(),
         },
         paragraphs: ParagraphsConfig::JustSmallParagraphs,
     };

@@ -19,6 +19,6 @@ incodoc = "0.8.0"
 # incodoc = { path = "../incodoc" }
 
 [dev-dependencies]
-md-to-incodoc = "0.3.3"
+md-to-incodoc = "0.3.4"
 # md-to-incodoc = { path = "../md-to-incodoc" }
 

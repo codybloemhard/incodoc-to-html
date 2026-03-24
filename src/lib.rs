@@ -360,6 +360,9 @@ pub fn link_to_html(link: &Link, conf: &LinksConfig, output: &mut String) {
     }
     *output += "\"";
     tags_to_html(&link.tags, true, false, output);
+    if link.tags.contains("footnote-ref") {
+        *output += &conf.footnote_ref_prefix;
+    }
     for item in &link.items {
         match item {
             EmOrText::Text(text) => *output += text,

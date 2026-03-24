@@ -64,10 +64,11 @@ pub enum HeaderLink {
     }
 }
 
-#[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
+#[derive(Clone, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
 pub struct LinksConfig {
     pub local_links_open_in_blank: bool,
     pub footnote_ref_links_open_in_blank: bool,
+    pub footnote_ref_prefix: String,
 }
 
 #[derive(Clone, Copy, Default, Hash, Debug, Eq, PartialEq, Ord, PartialOrd)]
