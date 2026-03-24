@@ -8,6 +8,7 @@ pub mod config;
 
 use config::*;
 
+/// In goes your document and config, out comes the HTML
 pub fn doc_to_html_string(doc: &mut Doc, conf: &Config) -> String {
     let mut res = String::new();
     doc.insert_table_of_contents_section_ids();
@@ -15,6 +16,7 @@ pub fn doc_to_html_string(doc: &mut Doc, conf: &Config) -> String {
     res
 }
 
+/// For the prefix and postfix when using Include::Augmented
 pub type Blobs<'a> = (Option<&'a str>, Option<&'a str>);
 
 pub fn doc_to_html(doc: &Doc, conf: &Config, output: &mut String) {
@@ -108,6 +110,7 @@ pub fn header_link_to_html(hlink: &HeaderLink, output: &mut String) {
     }
 }
 
+/// Generates the top level HTML for the table of contents
 pub fn top_toc_to_html(
     toc: Option<TableOfContentsItem>,
     conf: &TableOfContentsConfig,
@@ -131,6 +134,7 @@ pub fn top_toc_to_html(
     res
 }
 
+/// Generates the recursive inner part of the table of contents
 pub fn toc_to_html(toc: &TableOfContentsItem, output: &mut String) {
     if toc.item_type != TableOfContentsItemType::Document {
         if toc.link.is_empty() {
